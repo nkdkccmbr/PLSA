@@ -130,10 +130,22 @@ if __name__ == '__main__':
     # 学習
     plsa.em_algorithm()
 
-    # 文書ごとのトピックに属する確率
-    print(plsa.pd_z)
+    # 単語ごとのトピックに属する確率
+    print('単語-トピック')
+    for i in range(plsa.pw_z.shape[1]):
+        print('Topic:', i)
+        for j in range(plsa.pw_z.shape[0]):
+            print(bow[j], plsa.pw_z[j][i])
 
     # 文書ごとのトピックに属する確率
-    print(plsa.pw_z)
+    print('文書-トピック')
+    print(plsa.pd_z)
+    for i in range(plsa.pd_z.shape[1]):
+        print('Topic:', i)
+        for j in range(plsa.pd_z.shape[0]):
+            print(DOC[j], plsa.pd_z[j][i])
+
+    # 単語ごとのトピックに属する確率
+    print('文書-トピック')
     for i, word in enumerate(plsa.pw_z):
         print(bow[i], word)
