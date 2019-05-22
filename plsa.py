@@ -35,11 +35,11 @@ class PLSA():
             for j in range(self.N):
                 for k in range(self.K):
                     l += self.n_dw[j, i] * self.pz_dw[k, j, i] * \
-                      math.log(self.pw_z[i, k] * self.pd_z[j, k] * self.pz[k])
+                      math.log(self.pw_z[i, k] * self.pd_z[j, k] * self.pz[k] + 1e-5)
         for i in range(self.M):
             for j in range(self.N):
                 for k in range(self.K):
-                    l -= self.n_dw[j, i] * self.pz_dw[k, j, i] * math.log(self.pz_dw[k, j, i])
+                    l -= self.n_dw[j, i] * self.pz_dw[k, j, i] * math.log(self.pz_dw[k, j, i] + 1e-5)
         return l
 
     def e_step(self):
