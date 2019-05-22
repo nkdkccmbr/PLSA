@@ -107,14 +107,18 @@ class PLSA():
             pre_log_likelihood = log_likelihood
 
 if __name__ == '__main__':
-    TOPIC_NUM = 2
-    DOC = ['リンゴはバラ科の植物で甘くて酸っぱい。',
-           'リンゴジュースも甘くて酸っぱい。',
-           'ゴリラは、ヒト科の動物である。']
-    
+    TOPIC_NUM = 5
+    # テキストファイルに切り出す
+    # 1行1文
+    doc = []
+    with open('document.txt', 'r') as f:
+        for line in f:
+            doc.append(line)
+
+    # 分かち書き
     from janome.tokenizer import Tokenizer
     t = Tokenizer()
-    doc_tokens = [t.tokenize(doc) for doc in DOC]
+    doc_tokens = [t.tokenize(d) for d in doc]
     sentences = [[token.surface for token in sentence_tokens] for sentence_tokens in doc_tokens]
 
     # BOWを作る
@@ -138,18 +142,25 @@ if __name__ == '__main__':
     print('単語-トピック')
     for i in range(plsa.pw_z.shape[1]):
         print('Topic:', i)
+        dic = {}
         for j in range(plsa.pw_z.shape[0]):
-            print(bow[j], plsa.pw_z[j][i])
+            dic[j] = (bow[j], plsa.pw_z[j][i])
+        sorted_list = sorted(dic.items(), key=lambda x:x[1][1], reverse=True)
+        for j, s in enumerate(sorted_list):
+            if j > PRINT_NUM:
+                break
+            print(s[1])
 
     # 文書ごとのトピックに属する確率
     print('文書-トピック')
     print(plsa.pd_z)
     for i in range(plsa.pd_z.shape[1]):
         print('Topic:', i)
+        dic = {}
         for j in range(plsa.pd_z.shape[0]):
-            print(DOC[j], plsa.pd_z[j][i])
-
-    # 単語ごとのトピックに属する確率
-    print('文書-トピック')
-    for i, word in enumerate(plsa.pw_z):
-        print(bow[i], word)
+            dic[j] = (doc[j], plsa.pd_z[j][i])
+        sorted_list = sorted(dic.items(), key=lambda x:x[1][1], reverse=True)
+        for j, s in enumerate(sorted_list):
+            if j > PRINT_NUM:
+                break
+            print(s[1])
