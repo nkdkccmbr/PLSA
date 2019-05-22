@@ -9,6 +9,9 @@ THRESHOLD = 1.0
 PRINT_NUM = 10
 NLL_MAX   = 0
 
+STOP_WORDS = ['て', 'に', 'を', 'は', '、', '。', '\n', 'と', 'も',
+              'で', 'ある', 'この', 'その', 'あの', 'どの', 'こと', 'な', 'の',]
+
 class PLSA():
     # 単語と文書の行列(np.array)とトピック数
     def __init__(self, MATRIX, K):
@@ -130,7 +133,7 @@ if __name__ == '__main__':
     # word_list = [bow[w] for sw in sentence_word_id_list for w in sw]
 
     # 文書をBOWの頻度行列に直す
-    MATRIX = np.array([[sentence.count(word) for word in bow] for sentence in sentences])
+    MATRIX = np.array([[sentence.count(word) for word in bow if word not in STOP_WORDS] for sentence in sentences])
 
     # pLSAの構築
     plsa = PLSA(MATRIX, TOPIC_NUM)
