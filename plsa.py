@@ -5,6 +5,10 @@ import numpy as np
 # 同時確率 P(D,W) -> p_dw
 # 事後確率 P(D|Z) -> pd_z
 
+THRESHOLD = 1.0
+PRINT_NUM = 10
+NLL_MAX   = 0
+
 class PLSA():
     # 単語と文書の行列(np.array)とトピック数
     def __init__(self, MATRIX, K):
@@ -92,13 +96,13 @@ class PLSA():
         self.pd_z[j, k] = sum_mn1 / sum_mn2
         
     def em_algorithm(self):
-        pre_log_likelihood = 999
+        pre_log_likelihood = NLL_MAX
         while True:
             self.e_step()
             self.m_step()
             log_likelihood = self.log_likelihood_minimum()
             print(log_likelihood)
-            if abs(log_likelihood - pre_log_likelihood) < 0.1:
+            if abs(log_likelihood - pre_log_likelihood) < THRESHOLD:
                 break
             pre_log_likelihood = log_likelihood
 
