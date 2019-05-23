@@ -124,8 +124,8 @@ if __name__ == '__main__':
     # 分かち書き
     from janome.tokenizer import Tokenizer
     t = Tokenizer()
-    doc_tokens = [t.tokenize(d) for d in doc if word not in STOP_WORDS]
-    sentences = [[token.surface for token in sentence_tokens] for sentence_tokens in doc_tokens]
+    doc_tokens = [t.tokenize(d) for d in doc]
+    sentences = [[token.surface for token in sentence_tokens if token.surface not in STOP_WORDS] for sentence_tokens in doc_tokens]
 
     # BOWを作る
     bow = list({word for sentence in sentences for word in sentence})
