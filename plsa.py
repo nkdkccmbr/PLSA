@@ -9,8 +9,11 @@ THRESHOLD = 1.0
 PRINT_NUM = 10
 NLL_MAX   = 0
 
-STOP_WORDS = ['て', 'に', 'を', 'は', '、', '。', '\n', 'と', 'も',
-              'で', 'ある', 'この', 'その', 'あの', 'どの', 'こと', 'な', 'の',]
+STOP_WORDS = ['、', '。', '\n', '(', ')', '（', '）', '「', '」', '[', ']', '，', '．',
+              '「', '」', '', '', '', '', '', '', '', '', 
+              'て', 'に', 'を', 'は', 'と', 'も', 'ない', 'よう', 'に', 'さ',
+              'で', 'ある', 'この', 'その', 'あの', 'どの', 'こと', 'な', 'の',
+              'ら', 'い', 'ん', 'られる', 'ず', 'という', 'なり', 'とき', 'により', 'いう']
 
 class PLSA():
     # 単語と文書の行列(np.array)とトピック数
@@ -121,7 +124,7 @@ if __name__ == '__main__':
     # 分かち書き
     from janome.tokenizer import Tokenizer
     t = Tokenizer()
-    doc_tokens = [t.tokenize(d) for d in doc]
+    doc_tokens = [t.tokenize(d) for d in doc if word not in STOP_WORDS]
     sentences = [[token.surface for token in sentence_tokens] for sentence_tokens in doc_tokens]
 
     # BOWを作る
@@ -133,7 +136,7 @@ if __name__ == '__main__':
     # word_list = [bow[w] for sw in sentence_word_id_list for w in sw]
 
     # 文書をBOWの頻度行列に直す
-    MATRIX = np.array([[sentence.count(word) for word in bow if word not in STOP_WORDS] for sentence in sentences])
+    MATRIX = np.array([[sentence.count(word) for word in bow] for sentence in sentences])
 
     # pLSAの構築
     plsa = PLSA(MATRIX, TOPIC_NUM)
