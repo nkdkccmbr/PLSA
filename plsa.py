@@ -9,11 +9,16 @@ THRESHOLD = 1.0
 PRINT_NUM = 10
 NLL_MAX   = 0
 
+BETA_MOMENTUM = 0.99
+
 STOP_WORDS = ['、', '。', '\n', '(', ')', '（', '）', '「', '」', '[', ']', '，', '．',
-              '「', '」', '', '', '', '', '', '', '', '', 
+              '「', '」', '・', '', '', '', '', '', '', '', 
               'て', 'に', 'を', 'は', 'と', 'も', 'ない', 'よう', 'に', 'さ',
+              'し', 'が', 'など', 'れ', 'た', 'が', 'や', 'せ', 'または', 'また',
               'で', 'ある', 'この', 'その', 'あの', 'どの', 'こと', 'な', 'の',
-              'ら', 'い', 'ん', 'られる', 'ず', 'という', 'なり', 'とき', 'により', 'いう']
+              'ら', 'い', 'ん', 'られる', 'ず', 'という', 'なり', 'とき', 'により', 'いう',
+              'する', 'した', 'れる', 'において', 'そして', 'ただ', 'み', 'もの', 'まし', 'たり',
+              'なお', 'ほか', 'いる', '', '', '', '', '', '', ]
 
 class PLSA():
     # 単語と文書の行列(np.array)とトピック数
@@ -34,6 +39,9 @@ class PLSA():
         self.pz    = np.random.rand(self.K)
         self.pz_dw = np.random.rand(self.K, self.N, self.M)
 
+        # TEMのパラメータ
+        self.beta = 1.0
+
     # 対数尤度の下限
     def log_likelihood_minimum(self):
         l = 0
@@ -53,12 +61,12 @@ class PLSA():
             for j in range(self.N):
                 sum_k = 0
                 for k in range(self.K):
-                    sum_k += self.pz[k] * self.pw_z[i, k] * self.pd_z[j, k]
+                    sum_k += self.pz[k] * (self.pw_z[i, k] * self.pd_z[j, k])**self.beta
                 for k in range(self.K):
                     self.calc_pz_dw(i, j, k, sum_k)
 
     def calc_pz_dw(self, i, j, k, sum_k):
-        self.pz_dw[k, j, i] = (self.pz[k] * self.pw_z[i, k] * self.pd_z[j, k]) / sum_k
+        self.pz_dw[k, j, i] = (self.pz[k] * (self.pw_z[i, k] * self.pd_z[j, k])**self.beta) / sum_k
         
     def m_step(self):
         for i in range(self.M):
@@ -111,9 +119,10 @@ class PLSA():
             if abs(log_likelihood - pre_log_likelihood) < THRESHOLD:
                 break
             pre_log_likelihood = log_likelihood
+            self.beta *= BETA_MOMENTUM
 
 if __name__ == '__main__':
-    TOPIC_NUM = 5
+    TOPIC_NUM = 3
     # テキストファイルに切り出す
     # 1行1文
     doc = []
